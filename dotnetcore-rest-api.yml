@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+  selector:
+    name: dotnet-rest-api-web
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dotnet-rest-api-deploy
+  labels:
+    name: dotnet-rest-api
+spec:
+  replicas: 2
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: dotnet-rest-api
+    spec:
+      imagePullSecrets:
+        - name: dotnet-meetup-cluster-secrets
+      containers:
+      - image: dotnetmeetupcl.azurecr.io/dotnetcore-rest-api:v2
+        name: dotnet-rest-api-container
+        ports:
+        - containerPort: 80
+          name: dotnet-rest-api
+        imagePullPolicy: Always
+      restartPolicy: Always

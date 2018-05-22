@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  dotnetcore-rest-api:
+    image: dotnetcore-rest-api
+    build:
+      context: .
+      dockerfile: dotnetcore-rest-api/Dockerfile
